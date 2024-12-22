@@ -1,16 +1,17 @@
 import createHttpError from "http-errors";
 import Course from "../models/courseModel.js";
+import { Counter } from "../models/counterModel.js";
 
 const createCourse = async (req, res, next) => {
   try {
-    const { name, techStack, timing, timeDuration } = req.body;
+    const { name, techStack, trainer, timing, timeDuration } = req.body;
 
     if (!name || !techStack || !timing || !timeDuration) {
-      return `All fields are required.`;
+      return res.status(400).json({ message: "All fields are required." });
     }
 
     // Get the next sequence for courseId
-    const counter = await Course.findOneAndUpdate(
+    const counter = await Counter.findOneAndUpdate(
       { name: "courseId" },
       { $inc: { seq: 1 } },
       { new: true, upsert: true }
@@ -63,8 +64,8 @@ const getAllCourses = async (req, res, next) => {
 };
 
 const getCourseById = async (req, res, next) => {
+  const { courseId } = req.params;
   try {
-    const { courseId } = req.params;
     const course = await Course.findOne({ courseId });
 
     if (!course) {
@@ -93,7 +94,7 @@ const updateCourse = async (req, res, next) => {
     const { courseId } = req.params;
     const updates = req.body;
 
-    const course = await Course.findOneAndUpdate({ courseIdId }, updates, {
+    const course = await Course.findOneAndUpdate({ courseId }, updates, {
       new: true,
     });
 

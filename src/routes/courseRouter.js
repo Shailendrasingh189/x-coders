@@ -5,8 +5,8 @@ const router = Router();
 
 router.post("/create",  createCourse);
 router.get("/read", getAllCourses );
-router.get("/read/:trainerId", getCourseById);
-router.put("/update/:trainerId",updateCourse );
-router.delete("/delete/:trainerId", deleteCourse);
+router.get("/read/:courseId", getCourseById);
+router.put("/update/:courseId", updateCourse);
+router.delete("/delete/:courseId", deleteCourse);
 
 export default router;
