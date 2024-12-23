@@ -5,6 +5,7 @@ import cors from "cors";
 import globalErrorHandler from "./middlewares/globalErrorHandler.js";
 import trainerRouter from "./routes/trainerRouter.js";
 import courseRouter from "./routes/courseRouter.js";
+import enquiryRouter from "./routes/enquiryRouter.js";
 import config from "./config/config.js";
 const app = express();
 
@@ -31,6 +32,7 @@ app.get("/", (req, res, next) => {
 
 app.use("/api/trainer", trainerRouter);
 app.use("/api/course", courseRouter);
+app.use("/api/enquiry", enquiryRouter);
 
 
 app.use(globalErrorHandler)
