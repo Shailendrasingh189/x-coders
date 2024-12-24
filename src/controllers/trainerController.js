@@ -1,6 +1,7 @@
 import { Trainer } from "../models/trainerModel.js";
 import { Counter } from "../models/counterModel.js";
 import createHttpError from "http-errors";
+import moment from "moment"; // for date formatting
 
 const createTrainer = async (req, res, next) => {
   // // Validate the request body using Joi
@@ -48,6 +49,10 @@ const createTrainer = async (req, res, next) => {
       timeDuration,
     });
 
+    // Format dates to dd/mm/yy
+    trainer.timing = moment(trainer.timing).format("DD/MM/YY");
+    trainer.timeDuration = moment(trainer.timeDuration).format("DD/MM/YY");
+
     return res.status(201).json({
       message: "Trainer Created Successfully.",
       success: true,
@@ -63,9 +68,17 @@ const createTrainer = async (req, res, next) => {
 const getAllTrainers = async (req, res, next) => {
   try {
     const trainers = await Trainer.find();
+
+    // Format dates for all trainers
+    const formattedTrainers = trainers.map((trainer) => ({
+      ...trainer.toObject(),
+      timing: moment(trainer.timing).format("DD/MM/YY"),
+      timeDuration: moment(trainer.timeDuration).format("DD/MM/YY"),
+    }));
+
     res.status(200).json({
       success: true,
-      trainers,
+      trainers: formattedTrainers,
     });
   } catch (error) {
     next(createHttpError(500, "Error fetching trainers.", error));

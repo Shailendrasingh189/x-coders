@@ -15,6 +15,7 @@ const TrainerSchema = new Schema(
     email: {
       type: String,
       required: [true, "email is required."],
+      unique:[true, "Email Must be unique."]
     },
     techStack: {
       type: String,
@@ -27,12 +28,10 @@ const TrainerSchema = new Schema(
       type: String,
       required: true,
     },
-    timing: {
-      type: Date,
+    time: {
+      type: Schema.Types.ObjectId,
+      ref: "Time",
     },
-    timeDuration: {
-      type: Date
-    }
   },
   { timestamps: true }
 );

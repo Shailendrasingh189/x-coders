@@ -19,11 +19,9 @@ const CourseSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Trainer",
     },
-    timing: {
-      type: Date,
-    },
-    timeDuration: {
-      type: Date,
+    time: {
+      type: Schema.Types.ObjectId,
+      ref: "Time",
     },
   },
   { timestamps: true }
