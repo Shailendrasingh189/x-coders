@@ -115,9 +115,9 @@ const deleteEnquiry = async (req, res, next) => {
     }
 
     res.status(200).json({
-      message: "Trainer deleted successfully.",
+      message: "Enquiry deleted successfully.",
       success: true,
-      trainer,
+      enquiry,
     });
   } catch (error) {
     next(createHttpError(500, "Error deleting trainer.", error));

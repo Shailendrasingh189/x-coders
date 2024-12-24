@@ -6,8 +6,8 @@ const router = Router();
 
 router.post("/create", createEnquiry);
 router.get("/read", getAllEnquiry);
-router.get("/read/:trainerId", getEnquiryById);
-router.put("/update/:trainerId", updateEnquiry);
-router.delete("/delete/:trainerId", deleteEnquiry);
+router.get("/read/:enquiryId", getEnquiryById);
+router.put("/update/:enquiryId", updateEnquiry);
+router.delete("/delete/:enquiryId", deleteEnquiry);
 
 export default router;
