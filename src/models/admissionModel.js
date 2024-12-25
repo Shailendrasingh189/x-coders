@@ -6,10 +6,6 @@ const AdmissionSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Enquiry",
     },
-    time: {
-      type: Schema.Types.ObjectId,
-      ref: "Time",
-    },
   },
   { timestamps: true }
 );

@@ -28,6 +28,18 @@ const EnquirySchema = new Schema(
       type: Boolean,
       default: false,
     },
+    date: {
+      type: Date,
+      required: [true, "Date is required."],
+    },
+    timing: {
+      type: String, // "10:00 AM - 12:00 PM"
+      required: [true, "Timing is required."],
+    },
+    timeDuration: {
+      type: String, // "2 hours"
+      required: [true, "Time duration is required."],
+    },
   },
   { timestamps: true }
 );

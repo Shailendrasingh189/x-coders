@@ -4,24 +4,12 @@ import createHttpError from "http-errors";
 import moment from "moment"; // for date formatting
 
 const createTrainer = async (req, res, next) => {
-  // // Validate the request body using Joi
-  // const { error, value } = trainerValidationSchema.validate(req.body, {
-  //   abortEarly: false, // To return all validation errors
-  // });
-
-  // if (error) {
-  //   const errorMessages = error.details.map((err) => err.message);
-  //   return next(createHttpError(400, errorMessages.join(", ")));
-  // }
-
-  // // Destructure validated values
-  // const { name, email, techStack, course, timing, timeDuration } = value;
 
   try {
-    const { name, email, techStack, course, timing, timeDuration } = req.body;
+    const { name, email, techStack, course,date, timing, timeDuration } = req.body;
 
     // validations
-    if (!name || !email || !techStack || !course) {
+    if (!name || !email || !techStack || !course || !date || !timing || !timeDuration) {
       return `Name, Email, Tech Stack Must Be Required.`;
     }
 
@@ -45,6 +33,7 @@ const createTrainer = async (req, res, next) => {
       email,
       techStack,
       course,
+      date,
       timing,
       timeDuration,
     });
