@@ -1,4 +1,3 @@
-import { required } from "joi";
 import { Schema, model } from "mongoose";
 
 const AdmissionSchema = new Schema(
@@ -20,11 +19,11 @@ const AdmissionSchema = new Schema(
       type: String,
       required: [true, "Mother Name is required."],
     },
-    gender: {
-      type: String,
-      // required: [true, "Gender is required."],
-      enum: ["Male", "Female", "Other"],
-    },
+    // gender: {
+    //   type: String,
+    //   // required: [true, "Gender is required."],
+    //   enum: ["Male", "Female", "Other"],
+    // },
     academics: {
       type: String,
       required: [true, "Academics are required."],
@@ -43,7 +42,7 @@ const AdmissionSchema = new Schema(
       required: [true, "Phone number is required."],
     },
     marks: {
-      tyoe: Number,
+      type: Number,
       required: [true, "Marks are required."],
     },
     temporaryAddress: {

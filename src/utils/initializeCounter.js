@@ -13,7 +13,12 @@ const initializeCounter = async () => {
   const trainerCounter = await Counter.findOne({ name: "trainerId" });
   if (!trainerCounter) {
     await Counter.create({ name: "trainerId", seq: 0 });
-  }
+  };
+  
+   const admissionCounter = await Counter.findOne({ name: "admissionId" });
+   if (!admissionCounter) {
+     await Counter.create({ name: "admissionId", seq: 0 });
+   }
 };
 
 initializeCounter();
