@@ -6,6 +6,7 @@ import globalErrorHandler from "./middlewares/globalErrorHandler.js";
 import trainerRouter from "./routes/trainerRouter.js";
 import courseRouter from "./routes/courseRouter.js";
 import enquiryRouter from "./routes/enquiryRouter.js";
+import admissionRouter from "./routes/admissionRouter.js";
 import config from "./config/config.js";
 const app = express();
 
@@ -30,9 +31,10 @@ app.get("/", (req, res, next) => {
   }
 });
 
-app.use("/api/trainer", trainerRouter);
-app.use("/api/course", courseRouter);
-app.use("/api/enquiry", enquiryRouter);
+app.use("/api/trainers", trainerRouter);
+app.use("/api/courses", courseRouter);
+app.use("/api/enquiries", enquiryRouter);
+app.use("/api/admitions", admissionRouter);
 
 
 app.use(globalErrorHandler)
