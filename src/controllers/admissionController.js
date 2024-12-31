@@ -1,8 +1,6 @@
 import createHttpError from "http-errors";
-import path from "path";
-import cloudinary from "../config/cloudinary.js";
+import { cloudinary } from "../config/cloudinary.js";
 import Admission from "../models/admissionModel.js";
-import { Counter } from "../models/counterModel.js";
 
 const createAdmission = async (req, res, next) => {
   try {
@@ -31,41 +29,27 @@ const createAdmission = async (req, res, next) => {
       !contact ||
       !marks ||
       !temporaryAddress ||
-      !permanentAddress ||
-      !sourceOfAdmission
+      !permanentAddress
     ) {
-      return next(createHttpError(400, `All fields are required.`));
+      return next(createHttpError(400, "All required fields must be filled."));
     }
 
     const existingAdmission = await Admission.findOne({ email });
     if (existingAdmission) {
-      return next(createHttpError(400, `This student is already registered.`));
+      return next(createHttpError(400, "This student is already registered."));
     }
 
-    if (!req.file) {
-      return next(createHttpError(400, "No image file provided."));
+    // File uploaded to Cloudinary
+    const uploadPhoto = req.file?.path;
+    if (!uploadPhoto) {
+      return next(createHttpError(400, "Upload photo is required."));
     }
 
-    // Upload the file to Cloudinary
-    let uploadPhotoUrl = null;
-    try {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: "admissions",
-      });
-      uploadPhotoUrl = result.secure_url;
-    } catch (err) {
-      return next(createHttpError(500, "Error uploading image to Cloudinary."));
-    }
+    // Generate admission ID
+    const admissionCount = await Admission.countDocuments();
+    const admissionId = `XCA${String(admissionCount + 1).padStart(3, "0")}`;
 
-    // Get the next sequence for admissionId
-    const counter = await Counter.findOneAndUpdate(
-      { name: "admissionId" },
-      { $inc: { seq: 1 } },
-      { new: true, upsert: true }
-    );
-
-    const admissionId = `XCA${String(counter.seq).padStart(3, "0")}`;
-
+    // Create Admission
     const admission = await Admission.create({
       admissionId,
       name,
@@ -80,7 +64,7 @@ const createAdmission = async (req, res, next) => {
       permanentAddress,
       sourceOfAdmission,
       refrence,
-      uploadPhoto: uploadPhotoUrl,
+      uploadPhoto,
     });
 
     return res.status(201).json({
@@ -89,12 +73,8 @@ const createAdmission = async (req, res, next) => {
       admission,
     });
   } catch (error) {
-    return next(
-      createHttpError(500, "Error when creating new admission.", error)
-    );
+    return next(createHttpError(500, "Server Error while creating admission."));
   }
 };
-
-
 
 export { createAdmission };
