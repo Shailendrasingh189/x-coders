@@ -1,5 +1,5 @@
+// controllers/admissionController.js
 import createHttpError from "http-errors";
-import { cloudinary } from "../config/cloudinary.js";
 import Admission from "../models/admissionModel.js";
 
 const createAdmission = async (req, res, next) => {
@@ -39,17 +39,15 @@ const createAdmission = async (req, res, next) => {
       return next(createHttpError(400, "This student is already registered."));
     }
 
-    // File uploaded to Cloudinary
-    const uploadPhoto = req.file?.path;
-    if (!uploadPhoto) {
+    if (!req.file) {
       return next(createHttpError(400, "Upload photo is required."));
     }
 
-    // Generate admission ID
+    const uploadPhoto = req.file.path;
+
     const admissionCount = await Admission.countDocuments();
     const admissionId = `XCA${String(admissionCount + 1).padStart(3, "0")}`;
 
-    // Create Admission
     const admission = await Admission.create({
       admissionId,
       name,
@@ -67,13 +65,13 @@ const createAdmission = async (req, res, next) => {
       uploadPhoto,
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       message: "Admission created successfully.",
       success: true,
       admission,
     });
   } catch (error) {
-    return next(createHttpError(500, "Server Error while creating admission."));
+    next(createHttpError(500, "Server Error while creating admission."));
   }
 };
 

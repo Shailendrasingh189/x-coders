@@ -17,7 +17,7 @@ const createEnquiry = async (req, res, next) => {
       return next(createHttpError(400, `This user is already registered.`));
     }
 
-    // Get the next sequence for trainerId
+    // Get the next sequence for enquiryId
     const counter = await Counter.findOneAndUpdate(
       { name: "enquiryId" },
       { $inc: { seq: 1 } },
