@@ -28,7 +28,7 @@ const AdmissionSchema = new Schema(
     },
     sourceOfAdmission: { type: String },
     refrence: { type: String },
-    uploadPhoto: { type: String, required: true },
+    uploadPhoto: { type: String},
   },
   { timestamps: true }
 );
