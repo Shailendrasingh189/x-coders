@@ -2,7 +2,7 @@ import express from "express";
 import createHttpError from "http-errors";
 import cors from "cors";
 import { fileURLToPath } from "url";
-import path from "path";
+// import path from "path";
 
 import globalErrorHandler from "./middlewares/globalErrorHandler.js";
 import trainerRouter from "./routes/trainerRouter.js";
@@ -15,18 +15,16 @@ const app = express();
 
 
 // Define __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// const __filename = fileURLToPath(import.meta.url);
+// const __dirname = path.dirname(__filename);
 
 // Set EJS as the template engine
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+// app.set("view engine", "ejs");
+// app.set("views", path.join(__dirname, "views"));
 
 // Static folder for serving CSS or images
-app.use(express.static(path.join(__dirname, "public")));
+// app.use(express.static(path.join(__dirname, "public")));
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 
@@ -55,17 +53,17 @@ app.use("/api/admitions", admissionRouter);
 
 
 // Route to render the form
-app.get("/admission-form", (req, res) => {
-  res.render("admissionForm"); // Render the EJS form
-});
+// app.get("/admission-form", (req, res) => {
+//   res.render("admissionForm"); // Render the EJS form
+// });
 
 
 app.use("/api/admissions", admissionRouter);
 
-app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
-  next();
-});
+// app.use((req, res, next) => {
+//   console.log(`${req.method} ${req.url}`);
+//   next();
+// });
 
 app.use(globalErrorHandler)
 export default app;
