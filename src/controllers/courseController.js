@@ -2,138 +2,129 @@ import createHttpError from "http-errors";
 import Course from "../models/courseModel.js";
 import { Counter } from "../models/counterModel.js";
 
-const createCourse = async (req, res, next) => {
+const getAllCourses = async (req, res) => {
   try {
-    const { name, techStack, trainer, timing, timeDuration } = req.body;
+    const courses = await Course.find({});
 
-    if (!name || !techStack || !timing || !timeDuration) {
-      return res.status(400).json({ message: "All fields are required." });
-    }
-
-    // Get the next sequence for courseId
-    const counter = await Counter.findOneAndUpdate(
-      { name: "courseId" },
-      { $inc: { seq: 1 } },
-      { new: true, upsert: true }
-    );
-
-    const courseId = `XCC${String(counter.seq).padStart(3, "0")}`;
-
-    const course = await Course.create({
-      courseId,
-      name,
-      techStack,
-      trainer,
-      timing,
-      timeDuration,
-    });
-
-    return res.status(201).json({
-      message: "Course Created Successfully.",
-      success: true,
-      course,
-    });
+    return res
+      .status(200)
+      .json({ success: true, messsage: "Courses fetch ", data: courses });
   } catch (error) {
-    return next(
-      createHttpError(
-        500,
-        "Error while creating course in courseController",
-        error
-      )
-    );
+    next(new createHttpError(500, "Error occurs while getting courses."));
   }
 };
 
-const getAllCourses = async (req, res, next) => {
+const createCourse = async (req, res, next) => {
   try {
-    const courses = await Course.find();
+    const { name, category, courseDuration, fee } = req.body;
 
-    return res.status(200).json({
+    // Validate required fields
+    if (!name || !category || !courseDuration || !fee) {
+      return res
+        .status(400)
+        .json({ success: false, message: "All fields are required." });
+    }
+
+    const totalCourses = (await Course.countDocuments()) || 0;
+    const courseId = `XCC${String(totalCourses + 1).padStart(3, "0")}`;
+
+    // Create a new course
+    const course = await Course.create({
+      courseId,
+      name,
+      category,
+      courseDuration,
+      fee,
+    });
+
+    return res.status(201).json({
       success: true,
-      courses,
+      message: "Course created Successfully",
+      course,
     });
   } catch (error) {
-    return next(
-      createHttpError(
-        500,
-        "Error While Getting Course in courseController.",
-        error
-      )
-    );
+    next(new ExpressErrorHandler(500, "Error creating course.", error));
   }
 };
 
 const getCourseById = async (req, res, next) => {
-  const { courseId } = req.params;
   try {
+    const { courseId } = req.params;
+
     const course = await Course.findOne({ courseId });
 
     if (!course) {
-      return next(
-        createHttpError(404, `Course with ID ${courseId} not found.`)
-      );
+      return res
+        .status(404)
+        .json({ success: false, message: "Course Id not found" });
     }
 
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
+      message: "Course retrieved successfully.",
       course,
     });
   } catch (error) {
-    return next(
-      createHttpError(
+    next(
+      new ExpressErrorHandler(
         500,
-        "Error While Getting Course in courseController.",
+        "Error occurs on getting courses data.",
         error
       )
     );
   }
 };
 
-const updateCourse = async (req, res, next) => {
+const updateCourseById = async (req, res, next) => {
   try {
     const { courseId } = req.params;
     const updates = req.body;
 
     const course = await Course.findOneAndUpdate({ courseId }, updates, {
       new: true,
+      runValidators: true,
     });
 
-    return res.status(200).json({
-      message: "Course Update Successfully.",
-      success: true,
-      course
-    });
+    if (!course) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Course Id not found" });
+    }
 
+    return res
+      .status(200)
+      .json({ success: true, message: "Course Update Successfully", course });
   } catch (error) {
-    return next(
-      createHttpError(
-        500,
-        "Error While updating Course in courseController.",
-        error
-      )
-    );
+    next(new ExpressErrorHandler(500, "Error while Update course", error));
   }
 };
 
-const deleteCourse = async (req, res, next) => {
-  const { courseId } = req.params;
-
+const deleteCourseById = async (req, res, next) => {
   try {
+    const { courseId } = req.params();
     const course = await Course.findOneAndDelete({ courseId });
     if (!courseId) {
-      return next(
-        createHttpError(404, `Course with ID ${courseId} not found.`)
-      );
+      return res
+        .status(404)
+        .json({ success: false, message: "Course Id not found" });
     }
 
-    res.status(200).json({
-      message: "Course deleted successfully.",
+    return res.status(200).json({
       success: true,
+      message: "Course deleted successfully",
       course,
     });
   } catch (error) {
-    next(createHttpError(500, "Error deleting trainer.", error));
+    next(new ExpressErrorHandler(500, "Error on deleting course", error));
   }
+};
+
+export {
+  getAllCourses,
+  getCourseById,
+  createCourse,
+  updateCourseById,
+  deleteCourseById,
 };
 
 export { createCourse, getAllCourses, getCourseById, updateCourse, deleteCourse };

@@ -1,6 +1,6 @@
 import { Schema, model } from "mongoose";
 
-const CourseSchema = new Schema(
+const courseSchema = new Schema(
   {
     courseId: {
       type: String,
@@ -9,20 +9,33 @@ const CourseSchema = new Schema(
     },
     name: {
       type: String,
-      required: [true, "Course Name is required."],
+      required: true,
+      trim: true,
     },
-    techStack: {
+    category: {
       type: String,
-      required: [true, "Tech Stack is required, like MERN, MEAN, JAVA etc."],
+      enum: [
+        "Job Guaranted Program",
+        "Mastery Program",
+        "Foundation Program",
+        "IPB Program", //Interview Preparation Bootcamp
+        "Crash Courses",
+        "MNC Expert Program"
+      ],
+      required: true,
     },
-    trainer: {
-      type: Schema.Types.ObjectId,
-      ref: "Trainer",
+    courseDuration: {
+      type: String,
+      required: true,
+    },
+    fee: {
+      type: Number,
+      required: true,
     },
   },
   { timestamps: true }
 );
 
-const Course = model("Course", CourseSchema);
+const Course = model("Course", courseSchema);
 
 export default Course;
