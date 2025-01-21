@@ -1,7 +1,7 @@
 import express from "express";
 import createHttpError from "http-errors";
 import cors from "cors";
-import { fileURLToPath } from "url";
+// import { fileURLToPath } from "url";
 // import path from "path";
 
 import globalErrorHandler from "./middlewares/globalErrorHandler.js";
@@ -9,6 +9,7 @@ import trainerRouter from "./routes/trainerRouter.js";
 import courseRouter from "./routes/courseRouter.js";
 import enquiryRouter from "./routes/enquiryRouter.js";
 import admissionRouter from "./routes/admissionRouter.js";
+import dashboardRouter from "./routes/dashboardRouter.js";
 
 import config from "./config/config.js";
 const app = express();
@@ -50,6 +51,8 @@ app.use("/api/trainers", trainerRouter);
 app.use("/api/courses", courseRouter);
 app.use("/api/enquiries", enquiryRouter);
 app.use("/api/admitions", admissionRouter);
+app.use("/api/dashboard", dashboardRouter);
+
 
 
 // Route to render the form
