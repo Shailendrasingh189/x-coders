@@ -2,22 +2,24 @@ import createHttpError from "http-errors";
 import { Enquiry } from "../models/enquiryModel.js";
 import { Counter } from "../models/counterModel.js";
 
-const createEnquiry = async (req, res, next) => {
-
+const createEnquiry = async (req, res) => {
   try {
-    const { name, email, contact, course, demo} = req.body;
+    const {
+      name,
+      email,
+      course,
+      contactNo,
+      courseFees,
+      finalizeFees,
+      academicQualifaction,
+      referral,
+      yearOfPassing,
+      sourceOfEnquiry,
+      status,
+      demo,
+      followUp,
+    } = req.body;
 
-    // validations
-    if (!name || !email || !contact || !course) {
-      return `Name, Email, contact, course Must Be Required.`;
-    }
-
-    const existingTrainer = await Enquiry.findOne({ email });
-    if (existingTrainer) {
-      return next(createHttpError(400, `This user is already registered.`));
-    }
-
-    // Get the next sequence for enquiryId
     const counter = await Counter.findOneAndUpdate(
       { name: "enquiryId" },
       { $inc: { seq: 1 } },
@@ -25,25 +27,35 @@ const createEnquiry = async (req, res, next) => {
     );
 
     const enquiryId = `XCE${String(counter.seq).padStart(3, "0")}`;
-
-    const trainer = await Enquiry.create({
+    const enquiry = new Enquiry({
       enquiryId,
       name,
       email,
-      contact,
       course,
+      contactNo,
+      courseFees,
+      finalizeFees,
+      academicQualifaction,
+      yearOfPassing,
+      sourceOfEnquiry,
+      referral,
+      status,
       demo,
+      followUp,
     });
-
-    return res.status(201).json({
-      message: "Enquiry submited successfully.",
-      success: true,
-      trainer,
-    });
+    await enquiry.save();
+    if (enquiry) {
+      res.status(200).json({
+        success: true,
+        message: "Enquiry save successfully",
+        enquiryData: enquiry,
+      });
+    }
   } catch (error) {
-    return next(
-      createHttpError(500, "Error when creating new Enquiry.", error)
-    );
+    res.status(500).json({
+      success: false,
+      message: "wrong",
+    });
   }
 };
 
@@ -78,30 +90,57 @@ const getEnquiryById = async (req, res, next) => {
   }
 };
 
-const updateEnquiry = async (req, res, next) => {
-  const { enquiryId } = req.params;
-  const updates = req.body;
-
+const updateEnquiry = async (req, res) => {
   try {
-    const enquiry = await Enquiry.findOneAndUpdate({enquiryId}, updates, {
-      new: true,
-    });
-
-    if (!enquiry) {
-      return next(
-        createHttpError(404, `Enquiry with ID ${enquiryId} not found.`)
-      );
-    }
-
+    const { id } = req.params;
+    const {
+      name,
+      email,
+      course,
+      contactNo,
+      courseFees,
+      finalizeFees,
+      academicQualifaction,
+      yearOfPassing,
+      sourceOfEnquiry,
+      referral,
+      status,
+      demo,
+      followUp,
+    } = req.body;
+    console.log(req.body);
+    const enquiry = await Enquiry.findByIdAndUpdate(
+      id,
+      {
+        name,
+        email,
+        course,
+        contactNo,
+        courseFees,
+        finalizeFees,
+        academicQualifaction,
+        yearOfPassing,
+        sourceOfEnquiry,
+        referral,
+        status,
+        demo,
+        followUp,
+      },
+      { new: true }
+    );
     res.status(200).json({
-      message: "Enquiry updated successfully.",
       success: true,
+      message: "Enquiry updated successfully",
       enquiry,
     });
   } catch (error) {
-    next(createHttpError(500, "Error updating enquiry.", error));
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
   }
 };
+
 
 const deleteEnquiry = async (req, res, next) => {
   const { enquiryId } = req.params;
